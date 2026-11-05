@@ -40,8 +40,8 @@ Editable on the bar or in its web interface. They are read at launch: restart th
 
 | Setting | Type | Default | Purpose |
 | --- | --- | --- | --- |
-| Custom: minutes | integer, 1 to 180 | 7 | starting time of the Custom time control |
-| Custom: increment (s) | integer, 0 to 60 | 3 | increment of the Custom time control |
+| Custom time (min) | integer, 1 to 180 | 7 | starting time of your own time control, the tenth entry of the wheel |
+| Custom bonus per move (s) | integer, 0 to 60 | 3 | seconds added after each move in that time control; 0 for none |
 | Sound | on/off | on | turns every sound of the app on or off |
 | Beep under 10 s | on/off | on | one beep when the running clock drops under 10 seconds |
 

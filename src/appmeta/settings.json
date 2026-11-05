@@ -3,16 +3,16 @@
   "version": 3,
   "fields": {
     "custom_minutes": {
-      "label": "Custom: minutes",
-      "description": "Starting time of the Custom time control.",
+      "label": "Custom time (min)",
+      "description": "Starting time of your own time control, in minutes.",
       "type": "integer",
       "default": 7,
       "min": 1,
       "max": 180
     },
     "custom_increment": {
-      "label": "Custom: increment (s)",
-      "description": "Seconds added after each move.",
+      "label": "Custom bonus per move (s)",
+      "description": "Seconds added to a player's clock after each move.",
       "type": "integer",
       "default": 3,
       "min": 0,
