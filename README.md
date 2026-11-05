@@ -71,6 +71,7 @@ pnpm app:uninstall  # removes it (settings are kept)
 | --- | --- |
 | `src/game.ts` | the clock: state machine, time, increment, flag. Pure, no I/O |
 | `src/format.ts` | how a clock reads, and when that reading next changes |
+| `src/redraw.ts` | how long to wait before the display has to be drawn again |
 | `src/view.ts` | game state → elements for both displays |
 | `src/painter.ts` | sends the bar only the elements that changed, one request at a time |
 | `src/input.ts` | bar keys → game actions |

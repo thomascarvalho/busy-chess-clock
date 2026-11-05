@@ -1,20 +1,18 @@
 import { audioPlay, displayClear, displayDraw, getAppSettings } from "@shared/device";
 import manifest from "./appmeta/manifest.json";
 import { cueFor, type Cue } from "./cues.ts";
-import { isLow, msUntilNextChange } from "./format.ts";
+import { isLow } from "./format.ts";
 import { newGame, remainingMs, step, type Action, type Game } from "./game.ts";
 import { toAction } from "./input.ts";
 import { Latency } from "./latency.ts";
 import { Painter } from "./painter.ts";
+import { msUntilRedraw } from "./redraw.ts";
 import { DEFAULTS, readSettings, SETTINGS_VERSION, type Settings } from "./settings.ts";
 import { buildControls, controlIndex } from "./timeControls.ts";
 import { frame } from "./view.ts";
 
 /** The name the app draws under; the device clears elements by this id. */
 const APP = manifest.id;
-
-/** The runtime does not fire a timer sooner than this. */
-const MIN_TIMER_MS = 10;
 
 /** How long after a request the device did not take the frame is sent again. */
 const RETRY_MS = 1000;
@@ -60,6 +58,16 @@ let unbindInput: BusyUnbind | undefined;
 const drawTime = new Latency();
 /** From the big button going down to the device confirming the frame that shows it. */
 const pressToScreen = new Latency();
+/** How late the clock timer fires. */
+const timerDelay = new Latency();
+/** When the clock timer is due. */
+let dueAt = 0;
+/** The moment the frame on screen was drawn for. */
+let drawnAt = 0;
+
+/** A timer or a draw this late is reported: a redraw that slips by a second is a second the display skips. */
+const STALL_MS = 250;
+
 /** When the press whose frame is not confirmed yet happened. */
 let pressedAt: number | undefined;
 
@@ -71,7 +79,9 @@ const painter = new Painter({
   draw(elements) {
     const sentAt = Date.now();
     displayDraw(APP, elements, (error) => {
-      if (error === undefined) drawTime.add(Date.now() - sentAt);
+      const took = Date.now() - sentAt;
+      if (error === undefined) drawTime.add(took);
+      if (took > STALL_MS) console.info(`${APP}: draw answered after ${took} ms`);
       settled("draw", error);
     });
   },
@@ -109,12 +119,14 @@ function settled(what: string, error: string | undefined): void {
   if (tenths && typical !== undefined && drawTime.count >= TENTHS_MIN_DRAWS && typical > TENTHS_BUDGET_MS) {
     tenths = false;
     console.info(`${APP}: draws take about ${Math.round(typical)} ms, showing whole seconds only`);
+    paint(Date.now());
     schedule();
   }
 }
 
 function paint(now: number): void {
   if (stopped || !loaded) return;
+  drawnAt = now;
   painter.paint(frame(game, now, tenths));
 }
 
@@ -133,16 +145,22 @@ function schedule(): void {
 
   if (stopped || game.phase !== "running") return;
 
-  // Always from the timestamps, so a late timer shortens the next wait instead of adding up.
-  const left = remainingMs(game, game.active, Date.now());
+  // Counted from the moment the frame on screen was drawn for, not from the clock as it reads now:
+  // see msUntilRedraw. Always from timestamps, so a late timer shortens the next wait instead of adding up.
+  const current = Date.now();
+  const wait = msUntilRedraw(remainingMs(game, game.active, drawnAt), tenths, current - drawnAt);
+  dueAt = current + wait;
 
-  clockTimer = setTimeout(
-    () => {
-      clockTimer = undefined;
-      dispatch({ type: "tick" }, Date.now());
-    },
-    Math.max(MIN_TIMER_MS, msUntilNextChange(left, tenths)),
-  );
+  clockTimer = setTimeout(() => {
+    clockTimer = undefined;
+
+    const now = Date.now();
+    const late = now - dueAt;
+    timerDelay.add(Math.max(0, late));
+    if (late > STALL_MS || late < -STALL_MS) console.info(`${APP}: clock timer fired ${late} ms late`);
+
+    dispatch({ type: "tick" }, now);
+  }, wait);
 }
 
 /** Presses already covered by a latency line, so the same figures are not logged twice. */
@@ -154,7 +172,7 @@ function logLatency(): void {
 
   console.info(
     `${APP}: press to screen ${pressToScreen.average()} ms avg, ${pressToScreen.max} ms max over ${pressToScreen.count} presses; ` +
-      `draw ${drawTime.average()} ms avg, ${drawTime.max} ms max over ${drawTime.count} draws; tenths ${tenths ? "on" : "off"}`,
+      `draw ${drawTime.average()} ms avg, ${drawTime.max} ms max over ${drawTime.count} draws; timer ${timerDelay.average()} ms late avg, ${timerDelay.max} ms max over ${timerDelay.count} ticks; tenths ${tenths ? "on" : "off"}`,
   );
 }
 
