@@ -1,0 +1,8 @@
+{
+  /* The tests run on Node, not on the bar: same strictness as the app, plus Node's types. */
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": ["./", "../src", "../shared", "../types"]
+}
