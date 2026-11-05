@@ -58,13 +58,13 @@ No build needed. Download `com.thomascarvalho.chessclock-<version>.tgz` from the
 With the official CLI (needs Node 20 or later):
 
 ```sh
-npx -p @busy-app/cli busy-cli app install com.thomascarvalho.chessclock-0.1.0.tgz
+npx -p @busy-app/cli busy-cli app install com.thomascarvalho.chessclock-0.2.0.tgz
 ```
 
 Or with nothing but curl, in two requests; the second takes the `install_key` the first one answers with:
 
 ```sh
-curl -X POST 'http://10.0.4.20/api/apps/stage' --data-binary '@com.thomascarvalho.chessclock-0.1.0.tgz'
+curl -X POST 'http://10.0.4.20/api/apps/stage' --data-binary '@com.thomascarvalho.chessclock-0.2.0.tgz'
 curl -X POST 'http://10.0.4.20/api/apps/install?install_key=<install_key>'
 ```
 
