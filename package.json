@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "description": "Chess clock for two players",
   "author": "Thomas Carvalho",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "typecheck": "tsc && tsc -p test",

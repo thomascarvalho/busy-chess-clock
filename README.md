@@ -96,3 +96,7 @@ When you go back to setup after a game, or quit the app, it writes one line to t
 
 - The bar only exposes a wall clock: if it resets its time mid-game (network sync), the running clock jumps by the same amount. A clock that moves backwards never gives time back.
 - No Bronstein delay, no handicap, no time correction while paused, no multi-period time controls.
+
+## License
+
+[MIT](LICENSE)
