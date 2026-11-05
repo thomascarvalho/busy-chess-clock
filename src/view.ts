@@ -16,11 +16,11 @@ export const COLORS = {
   /** The clock that is running. */
   active: "#40FF70FF",
   /** The clock that waits. */
-  idle: "#FFFFFF50",
+  idle: "#FFFFFFA0",
   /** Under ten seconds, and the clock of a fallen flag. */
   low: "#FF2A2AFF",
   /** Under ten seconds, waiting. */
-  lowIdle: "#FF2A2A60",
+  lowIdle: "#FF2A2AA0",
   /** The clock that was stopped by a pause. */
   paused: "#FFB000FF",
   /** Text that carries no state: the time control. */
