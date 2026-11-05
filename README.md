@@ -23,10 +23,12 @@ One big button serves both players: each press stops the running clock and start
 
 ## Display
 
-- **Front:** both times side by side, player 1 on the left. The running clock (or the one that will start) is bright green, the other is dimmed, a paused clock is orange, and any time under 10 seconds is red. Times read `M:SS`, then seconds and tenths (`9.9`) under 10 seconds. If the bar takes too long to redraw, the app falls back to whole seconds on its own.
-- **Back:** time control, state, move number, who lost on time, and a reminder of the controls that apply in the current state.
+- **Front, in setup:** the knight next to the time control, with two dim arrows as a reminder that the wheel changes it.
+- **Front, during a game:** both times side by side, player 1 on the left, each above a one-pixel gauge that empties as its time runs out. The running clock (or the one that will start) is bright green, the other is dimmed, a paused clock is orange, and any time under 10 seconds is red. Times read `M:SS`, then seconds and tenths (`9.9`) under 10 seconds. If the bar takes too long to redraw, the app falls back to whole seconds on its own.
+- **Front, between the clocks:** a thin divider, replaced by a pause sign while paused.
+- **Back:** the knight, the time control and the state at the top; then whose move it is, pushed to that player's side with an arrow; the move number; and a reminder of the controls that apply in the current state.
 
-When a flag falls the game freezes, the loser's time reads zero in red and a sound is played.
+When a flag falls the game freezes, the loser's time reads zero in red and flashes for a few seconds, the back says who lost on time, and a sound is played.
 
 ## Time controls
 

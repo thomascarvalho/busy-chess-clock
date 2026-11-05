@@ -53,6 +53,15 @@ let tenths = true;
 /** Whether the running clock displayed under ten seconds when last looked at. */
 let wasLow = false;
 
+/** After a flag falls, the loser's clock flashes this many times, then stays lit. */
+const FLASHES = 6;
+/** How long each half of a flash lasts. */
+const FLASH_HALF_MS = 400;
+
+let flashTimer: ReturnType<typeof setInterval> | undefined;
+/** Whether the flashing clock is in its dimmed half. */
+let flagDim = false;
+
 /** Fires when the running clock's reading next changes, or when its flag falls. */
 let clockTimer: ReturnType<typeof setTimeout> | undefined;
 let retryTimer: ReturnType<typeof setTimeout> | undefined;
@@ -131,7 +140,27 @@ function settled(what: string, error: string | undefined): void {
 function paint(now: number): void {
   if (stopped || !loaded) return;
   drawnAt = now;
-  painter.paint(frame(game, now, tenths));
+  painter.paint(frame(game, now, tenths, flagDim));
+}
+
+function stopFlash(): void {
+  if (flashTimer !== undefined) clearInterval(flashTimer);
+  flashTimer = undefined;
+  flagDim = false;
+}
+
+/** Flashes the clock of the flag that just fell. The timer ends by itself, so a finished game goes quiet again. */
+function startFlash(): void {
+  stopFlash();
+
+  let halves = FLASHES * 2;
+  flashTimer = setInterval(() => {
+    flagDim = !flagDim;
+    halves--;
+    if (halves <= 0) stopFlash();
+
+    paint(Date.now());
+  }, FLASH_HALF_MS);
 }
 
 function play(cue: Cue): void {
@@ -198,6 +227,9 @@ function dispatch(action: Action, now: number, redraw = false): void {
 
   if (action.type === "start" && game !== before) pressedAt = now;
 
+  if (game.phase === "finished" && before.phase !== "finished") startFlash();
+  else if (game.phase !== "finished" && before.phase === "finished") stopFlash();
+
   // Back to setup: the game is over, say how the device kept up with it.
   if (game.phase === "setup" && before.phase !== "setup") logLatency();
 
@@ -224,6 +256,7 @@ function stop(): void {
 
   stopped = true;
 
+  stopFlash();
   if (clockTimer !== undefined) clearTimeout(clockTimer);
   if (retryTimer !== undefined) clearTimeout(retryTimer);
   clockTimer = undefined;

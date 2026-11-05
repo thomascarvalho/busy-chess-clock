@@ -83,7 +83,9 @@ When in doubt, choose the cheaper option: a slower refresh, fewer requests, less
 
 - The front is a 72×16 RGB LED matrix, the back a 160×80 greyscale OLED (`display: "front" | "back"` on each element). `src/view.ts` builds the whole frame for both from the game state; `Painter` in `src/painter.ts` sends only the elements that changed, through `displayDraw()` in `shared/device.ts`. Use `manifest.id` as the application name.
 - This app does not use `@busy-app/busy-lib`: like the official Clock and Weather apps it talks to the device through the small `fetch` client in `shared/device.ts`, to stay within the default 128 KiB heap.
-- Text is printable ASCII only. Everything the bar shows is in English: on-screen strings (in capitals), settings labels and the manifest description.
+- Text is printable ASCII only. Everything the bar shows is in English: on-screen strings, settings labels and the manifest description. The state on the back is in capitals because the `extra_large` font has no lowercase.
+- The view draws with three element types: text, solid rectangles (gauges, divider, pause sign) and images. The two images are the app's own icons, reused from `appmeta/` by path, so there is no second copy to keep in step.
+- A tick of the running clock must only change that clock and its gauge, so each tick stays a one- or two-element draw; `test/view.test.ts` checks it.
 - The firmware's `countdown` element is deliberately not used: it only takes whole-second timestamps, a fixed font and `MM:SS`, and cannot pause or show tenths.
 - Give every element a stable `id`. The device replaces elements with the same id, so only changed elements need to be sent.
 - Elements that leave the frame are removed by id with `displayClear()`; on exit the app clears everything it drew.

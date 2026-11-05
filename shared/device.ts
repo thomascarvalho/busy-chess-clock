@@ -41,7 +41,34 @@ export interface TextElement {
   display: "front" | "back";
 }
 
-export type DisplayElement = TextElement;
+export interface RectangleElement {
+  type: "rectangle";
+  id: string;
+  /** Top-left corner. */
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fill: "solid";
+  /** One #RRGGBBAA colour for a solid fill. */
+  fill_colors: [string];
+  /** 0: the firmware draws a 1-pixel white border by default. */
+  border_width: 0;
+  display: "front" | "back";
+}
+
+export interface ImageElement {
+  type: "image";
+  id: string;
+  /** Path of a .png inside the app's package, e.g. "appmeta/icon_front_8x8.png". */
+  path: string;
+  /** Top-left corner. */
+  x: number;
+  y: number;
+  display: "front" | "back";
+}
+
+export type DisplayElement = TextElement | RectangleElement | ImageElement;
 
 export interface AppSettingsDocument {
   version: number;
