@@ -49,6 +49,29 @@ With the defaults, the tenth entry of the wheel reads `7+3`. Set the two custom 
 
 ## Installation
 
+### From a release
+
+No build needed. Download `com.thomascarvalho.chessclock-<version>.tgz` from the [latest release](https://github.com/thomascarvalho/busy-chess-clock/releases/latest), then send it to the bar connected over USB, either way:
+
+With the official CLI (needs Node 20 or later):
+
+```sh
+npx -p @busy-app/cli busy-cli app install com.thomascarvalho.chessclock-0.1.0.tgz
+```
+
+Or with nothing but curl, in two requests; the second takes the `install_key` the first one answers with:
+
+```sh
+curl -X POST 'http://10.0.4.20/api/apps/stage' --data-binary '@com.thomascarvalho.chessclock-0.1.0.tgz'
+curl -X POST 'http://10.0.4.20/api/apps/install?install_key=<install_key>'
+```
+
+The app then shows up in the bar's Apps menu.
+
+Over Wi-Fi, HTTP API access must be enabled in the bar's web interface (Network, then HTTP API). Add `--addr <host>` to the CLI command, plus `--password <password>` if password protection is on. With curl, use the bar's address instead of `10.0.4.20` and send the password in an `X-API-Token` header.
+
+### From source
+
 Requires Node 24 (not Node 26), pnpm, and a BUSY Bar connected over USB or reachable over Wi-Fi.
 
 ```sh
