@@ -13,7 +13,8 @@
     "app:uninstall": "busy-cli app uninstall",
     "app:run": "busy-cli app run",
     "app:stop": "busy-cli app stop",
-    "sounds": "node tools/make-sounds.mjs"
+    "sounds": "node tools/make-sounds.mjs",
+    "icons": "node tools/make-icons.mjs"
   },
   "engines": {
     "node": ">=24 <26"

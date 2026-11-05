@@ -64,6 +64,7 @@ Over Wi-Fi, add `--addr <host>` (and `--password <password>` if password protect
 pnpm test           # unit tests, on Node, no bar needed
 pnpm typecheck
 pnpm sounds         # regenerates src/sounds/*.snd
+pnpm icons          # regenerates the two app icons in src/appmeta/
 pnpm app:stop       # quits the app on the bar
 pnpm app:uninstall  # removes it (settings are kept)
 ```
