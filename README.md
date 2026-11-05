@@ -2,7 +2,7 @@
 
 A chess clock for the BUSY Bar. The app runs entirely on the bar (on-device JavaScript, written in TypeScript) and only talks to the local API at `http://localhost/api/...`: it makes no external network request.
 
-App id: `com.thomascarvalho.chessclock`.
+App id: `com.thomascarvalho.chessclock`. It needs a bar with HTTP API 27.12.0 or later, and was developed and tested on firmware 1.3.1 (HTTP API 27.14.0).
 
 ## Controls
 
@@ -30,20 +30,22 @@ When a flag falls the game freezes, the loser's time reads zero in red and a sou
 
 ## Time controls
 
-`1+0`, `3+0`, `3+2`, `5+0`, `5+3`, `10+0`, `10+5`, `15+10`, `30+0`, then the `Custom` time control defined in the settings. The first number is the starting time in minutes, the second the increment in seconds added after each move (Fischer increment, credited after the move: a 3+2 game starts at 3:00).
+The wheel steps through `1+0`, `3+0`, `3+2`, `5+0`, `5+3`, `10+0`, `10+5`, `15+10`, `30+0`, then a tenth time control of your own, defined in the settings (`7+3` unless you change it). The first number is the starting time in minutes, the second the bonus in seconds added to a player's clock after each of their moves (Fischer increment, credited after the move: a 3+2 game starts at 3:00).
 
 The app opens on the time control of the last game played, `10+0` the first time. Turn the wheel in `SETUP` to pick another one; it becomes the new starting point as soon as a game is started with it.
 
 ## Settings
 
-Editable on the bar or in its web interface. They are read at launch: restart the app after a change.
+Editable on the bar (app menu, then Setup) or in its web interface. They are read at launch: restart the app after a change.
 
 | Setting | Type | Default | Purpose |
 | --- | --- | --- | --- |
 | Custom time (min) | integer, 1 to 180 | 7 | starting time of your own time control, the tenth entry of the wheel |
 | Custom bonus per move (s) | integer, 0 to 60 | 3 | seconds added after each move in that time control; 0 for none |
 | Sound | on/off | on | turns every sound of the app on or off |
-| Beep under 10 s | on/off | on | one beep when the running clock drops under 10 seconds |
+| Beep under 10 s | on/off | on | one beep when the running clock drops under 10 seconds; needs Sound on |
+
+With the defaults, the tenth entry of the wheel reads `7+3`. Set the two custom values to 20 and 5 and it reads `20+5`.
 
 ## Installation
 
@@ -78,12 +80,17 @@ pnpm app:uninstall  # removes it (settings are kept)
 | `src/painter.ts` | sends the bar only the elements that changed, one request at a time |
 | `src/input.ts` | bar keys → game actions |
 | `src/cues.ts` | which sound a change of state calls for |
+| `src/latency.ts` | bookkeeping for how long the bar takes to answer |
 | `src/settings.ts`, `src/timeControls.ts` | settings and the list of time controls |
 | `src/memory.ts` | remembers the time control of the last game across launches |
 | `src/main.ts` | wiring: input, timer, sounds, cleanup on exit |
 | `shared/device.ts` | HTTP client for the bar |
+| `tools/` | scripts that generate the sounds and the icons |
+| `test/` | unit tests for everything above except `main.ts` and `device.ts` |
 
 Remaining time is always computed from the difference between timestamps taken at each press; the timer only decides when to redraw.
+
+When you go back to setup after a game, or quit the app, it writes one line to the bar's log with the delay between a press and the screen showing it, how long draws took and how late its timer fired. It also logs any draw or timer more than 250 ms late.
 
 ## Known limits
 
