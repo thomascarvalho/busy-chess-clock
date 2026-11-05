@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { buildControls, controlIndex, CUSTOM, PRESETS } from "../src/timeControls.ts";
+import { buildControls, controlIndex, controlValue, CUSTOM, PRESETS } from "../src/timeControls.ts";
 
 test("the presets are the nine time controls of the spec, in order", () => {
   assert.deepEqual(
@@ -31,8 +31,30 @@ test("a stored value selects the matching time control", () => {
   assert.equal(controlIndex(controls, CUSTOM), controls.length - 1);
 });
 
-test("an unknown stored value falls back to 5+3", () => {
+test("an unknown stored value falls back to 10+0", () => {
   const controls = buildControls({ minutes: 7, increment: 3 });
 
-  assert.equal(controls[controlIndex(controls, "2+1")]!.label, "5+3");
+  assert.equal(controls[controlIndex(controls, "2+1")]!.label, "10+0");
+});
+
+test("with nothing remembered yet, the app opens on 10+0", () => {
+  const controls = buildControls({ minutes: 7, increment: 3 });
+
+  assert.equal(controls[controlIndex(controls, null)]!.label, "10+0");
+});
+
+test("a preset is remembered by its label, the custom time control by name", () => {
+  const controls = buildControls({ minutes: 7, increment: 3 });
+
+  assert.equal(controlValue(controls, 2), "3+2");
+  assert.equal(controlValue(controls, controls.length - 1), CUSTOM);
+});
+
+test("every time control is found again from what was remembered for it", () => {
+  // The custom one deliberately collides with a preset: it must still come back as custom.
+  const controls = buildControls({ minutes: 5, increment: 3 });
+
+  controls.forEach((_, index) => {
+    assert.equal(controlIndex(controls, controlValue(controls, index)), index);
+  });
 });

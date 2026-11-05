@@ -1,25 +1,7 @@
 {
   "format_version": 1,
-  "version": 1,
+  "version": 3,
   "fields": {
-    "default_time_control": {
-      "label": "Default time control",
-      "description": "Time control selected when the app opens.",
-      "type": "enum",
-      "default": "5+3",
-      "options": [
-        { "value": "1+0", "label": "1+0" },
-        { "value": "3+0", "label": "3+0" },
-        { "value": "3+2", "label": "3+2" },
-        { "value": "5+0", "label": "5+0" },
-        { "value": "5+3", "label": "5+3" },
-        { "value": "10+0", "label": "10+0" },
-        { "value": "10+5", "label": "10+5" },
-        { "value": "15+10", "label": "15+10" },
-        { "value": "30+0", "label": "30+0" },
-        { "value": "custom", "label": "Custom" }
-      ]
-    },
     "custom_minutes": {
       "label": "Custom: minutes",
       "description": "Starting time of the Custom time control.",

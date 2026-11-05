@@ -5,10 +5,11 @@ import { isLow } from "./format.ts";
 import { newGame, remainingMs, step, type Action, type Game } from "./game.ts";
 import { toAction } from "./input.ts";
 import { Latency } from "./latency.ts";
+import { LastControl } from "./memory.ts";
 import { Painter } from "./painter.ts";
 import { msUntilRedraw } from "./redraw.ts";
 import { DEFAULTS, readSettings, SETTINGS_VERSION, type Settings } from "./settings.ts";
-import { buildControls, controlIndex } from "./timeControls.ts";
+import { buildControls, controlIndex, controlValue } from "./timeControls.ts";
 import { frame } from "./view.ts";
 
 /** The name the app draws under; the device clears elements by this id. */
@@ -38,6 +39,9 @@ const SOUNDS: Record<Cue, string> = {
 let settings: Settings = DEFAULTS;
 
 let game: Game = newGame(buildControls({ minutes: DEFAULTS.customMinutes, increment: DEFAULTS.customIncrement }), 0);
+
+/** The time control of the last game played: the one the app opens on. */
+const lastControl = new LastControl(typeof localStorage === "undefined" ? undefined : localStorage);
 
 /** False until the settings are in: nothing is drawn and no game input is taken before that. */
 let loaded = false;
@@ -199,6 +203,13 @@ function dispatch(action: Action, now: number, redraw = false): void {
 
   paint(now);
   schedule();
+
+  // A game has started: this is the time control to open on next time. After the frame is on its
+  // way, because the write goes to flash.
+  if (before.phase === "ready" && game.phase === "running") {
+    const error = lastControl.save(controlValue(game.controls, game.control));
+    if (error !== undefined) report("remembering the time control", error);
+  }
 }
 
 /**
@@ -287,7 +298,7 @@ function main(): void {
     settings = stored;
 
     const controls = buildControls({ minutes: stored.customMinutes, increment: stored.customIncrement });
-    game = newGame(controls, controlIndex(controls, stored.defaultControl));
+    game = newGame(controls, controlIndex(controls, lastControl.load()));
     loaded = true;
 
     paint(Date.now());

@@ -1,16 +1,15 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { DEFAULTS, readSettings } from "../src/settings.ts";
-import { CUSTOM, PRESETS } from "../src/timeControls.ts";
+import { DEFAULTS, readSettings, SETTINGS_VERSION } from "../src/settings.ts";
 
 const schema = JSON.parse(readFileSync(new URL("../src/appmeta/settings.json", import.meta.url), "utf8")) as {
-  fields: Record<string, { type: string; default: unknown; options?: { value: string }[]; min?: number; max?: number }>;
+  version: number;
+  fields: Record<string, { type: string; default: unknown; min?: number; max?: number }>;
 };
 
 test("stored values are read as they are", () => {
   const settings = readSettings({
-    default_time_control: "10+5",
     custom_minutes: 45,
     custom_increment: 15,
     sound: false,
@@ -18,7 +17,6 @@ test("stored values are read as they are", () => {
   });
 
   assert.deepEqual(settings, {
-    defaultControl: "10+5",
     customMinutes: 45,
     customIncrement: 15,
     sound: false,
@@ -28,7 +26,7 @@ test("stored values are read as they are", () => {
 
 test("missing or mistyped values fall back to the defaults", () => {
   assert.deepEqual(readSettings(undefined), DEFAULTS);
-  assert.deepEqual(readSettings({ default_time_control: 5, custom_minutes: "7", sound: "yes" }), DEFAULTS);
+  assert.deepEqual(readSettings({ custom_minutes: "7", custom_increment: null, sound: "yes" }), DEFAULTS);
 });
 
 test("custom values outside the allowed range are clamped", () => {
@@ -38,21 +36,18 @@ test("custom values outside the allowed range are clamped", () => {
   assert.equal(settings.customIncrement, 60);
 });
 
-test("the defaults in code match the defaults in settings.json", () => {
+test("the settings in code are exactly the fields of settings.json, with the same defaults", () => {
   const fields = schema.fields;
 
-  assert.equal(fields["default_time_control"]!.default, DEFAULTS.defaultControl);
+  assert.deepEqual(Object.keys(fields).sort(), ["custom_increment", "custom_minutes", "low_time_beep", "sound"]);
   assert.equal(fields["custom_minutes"]!.default, DEFAULTS.customMinutes);
   assert.equal(fields["custom_increment"]!.default, DEFAULTS.customIncrement);
   assert.equal(fields["sound"]!.default, DEFAULTS.sound);
   assert.equal(fields["low_time_beep"]!.default, DEFAULTS.lowTimeBeep);
 });
 
-test("settings.json offers every preset plus the custom time control", () => {
-  assert.deepEqual(
-    schema.fields["default_time_control"]!.options!.map((option) => option.value),
-    [...PRESETS.map((preset) => preset.label), CUSTOM],
-  );
+test("the settings version the app expects is the one settings.json declares", () => {
+  assert.equal(schema.version, SETTINGS_VERSION);
 });
 
 test("settings.json only uses types the bar can edit on its own screen", () => {

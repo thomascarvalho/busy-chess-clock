@@ -1,11 +1,9 @@
 // The settings described by appmeta/settings.json. Pure: reading them from the device is main.ts's job.
 
 /** Must match "version" in appmeta/settings.json. */
-export const SETTINGS_VERSION = 1;
+export const SETTINGS_VERSION = 3;
 
 export interface Settings {
-  /** A preset label such as "5+3", or "custom". */
-  defaultControl: string;
   customMinutes: number;
   /** Seconds added per move. */
   customIncrement: number;
@@ -15,7 +13,6 @@ export interface Settings {
 
 /** Mirrors the "default" of every field in appmeta/settings.json; used when the device has no settings to give. */
 export const DEFAULTS: Settings = {
-  defaultControl: "5+3",
   customMinutes: 7,
   customIncrement: 3,
   sound: true,
@@ -38,10 +35,8 @@ function readInteger(value: unknown, fallback: number, range: { min: number; max
 /** Reads the stored values; anything missing or of the wrong type falls back to its default. */
 export function readSettings(values: Record<string, unknown> | null | undefined): Settings {
   const stored = values ?? {};
-  const control = stored["default_time_control"];
 
   return {
-    defaultControl: typeof control === "string" ? control : DEFAULTS.defaultControl,
     customMinutes: readInteger(stored["custom_minutes"], DEFAULTS.customMinutes, MINUTES),
     customIncrement: readInteger(stored["custom_increment"], DEFAULTS.customIncrement, INCREMENT),
     sound: readBoolean(stored["sound"], DEFAULTS.sound),

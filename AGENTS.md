@@ -104,7 +104,7 @@ When in doubt, choose the cheaper option: a slower refresh, fewer requests, less
 ## Code rules
 
 - The runtime is not Node.js and not a browser: no `fs`, `path`, `process`, `document` or `window`. `console`, `fetch` with `Request`/`Response`/`Headers`/`URL`, timers, `localStorage`, `Date`, `JSON` and standard ECMAScript are available.
-- `localStorage` persists small values per app, but every `setItem` rewrites the whole store to flash. Keep values small and writes rare. This app does not use it.
+- `localStorage` persists small values per app, but every `setItem` rewrites the whole store to flash. Keep values small and writes rare. This app stores one value there, the time control of the last game (`src/memory.ts`), written only when a game starts on a different time control than the one stored.
 - `src/` is the app and the only folder the build scans. `shared/` holds app-level helpers imported as `@shared/*`. The entry point must stay named `main.ts` or `main.js`.
 - Game logic, formatting, settings parsing, input mapping, the view and the painter are pure modules with unit tests in `test/`, run on Node with `pnpm test` (no bar needed). Write the test first when changing them. Only `src/main.ts` and `shared/device.ts` touch the device.
 - TypeScript is strict when the app is written in `.ts`; run `pnpm typecheck`. The entry point may be plain JavaScript (`src/main.js`) instead.

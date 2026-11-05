@@ -32,13 +32,14 @@ When a flag falls the game freezes, the loser's time reads zero in red and a sou
 
 `1+0`, `3+0`, `3+2`, `5+0`, `5+3`, `10+0`, `10+5`, `15+10`, `30+0`, then the `Custom` time control defined in the settings. The first number is the starting time in minutes, the second the increment in seconds added after each move (Fischer increment, credited after the move: a 3+2 game starts at 3:00).
 
+The app opens on the time control of the last game played, `10+0` the first time. Turn the wheel in `SETUP` to pick another one; it becomes the new starting point as soon as a game is started with it.
+
 ## Settings
 
 Editable on the bar or in its web interface. They are read at launch: restart the app after a change.
 
 | Setting | Type | Default | Purpose |
 | --- | --- | --- | --- |
-| Default time control | list | `5+3` | time control selected when the app opens |
 | Custom: minutes | integer, 1 to 180 | 7 | starting time of the Custom time control |
 | Custom: increment (s) | integer, 0 to 60 | 3 | increment of the Custom time control |
 | Sound | on/off | on | turns every sound of the app on or off |
@@ -77,6 +78,7 @@ pnpm app:uninstall  # removes it (settings are kept)
 | `src/input.ts` | bar keys → game actions |
 | `src/cues.ts` | which sound a change of state calls for |
 | `src/settings.ts`, `src/timeControls.ts` | settings and the list of time controls |
+| `src/memory.ts` | remembers the time control of the last game across launches |
 | `src/main.ts` | wiring: input, timer, sounds, cleanup on exit |
 | `shared/device.ts` | HTTP client for the bar |
 

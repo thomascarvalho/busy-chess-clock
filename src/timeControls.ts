@@ -2,11 +2,11 @@
 
 import type { TimeControl } from "./game.ts";
 
-/** The settings value that stands for the user-defined time control. */
+/** The remembered value that stands for the user-defined time control, whatever its minutes and increment are. */
 export const CUSTOM = "custom";
 
-/** Selected when the stored default is not one of the options. */
-const FALLBACK = "5+3";
+/** Selected when nothing is remembered yet, or when what is remembered is not a time control any more. */
+const FALLBACK = "10+0";
 
 export function timeControl(minutes: number, incrementSeconds: number): TimeControl {
   return {
@@ -33,8 +33,13 @@ export function buildControls(custom: { minutes: number; increment: number }): T
   return [...PRESETS, timeControl(custom.minutes, custom.increment)];
 }
 
-/** Index in `controls` (as built by `buildControls`) for a stored `default_time_control` value. */
-export function controlIndex(controls: readonly TimeControl[], value: string): number {
+/** What to remember for the time control at `index` in `controls` (as built by `buildControls`). */
+export function controlValue(controls: readonly TimeControl[], index: number): string {
+  return index === controls.length - 1 ? CUSTOM : controls[index]!.label;
+}
+
+/** Index in `controls` (as built by `buildControls`) for a remembered value; null when nothing is remembered. */
+export function controlIndex(controls: readonly TimeControl[], value: string | null): number {
   if (value === CUSTOM) return controls.length - 1;
 
   const presets = controls.slice(0, controls.length - 1);
