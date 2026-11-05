@@ -90,6 +90,7 @@ When in doubt, choose the cheaper option: a slower refresh, fewer requests, less
 - Observed on firmware 1.3.1 (HTTP API 27.14.0): a short press of Back makes the firmware wipe every element the app has drawn, on both displays, whether or not the app acts on the key. `src/main.ts` therefore calls `painter.invalidate()` on every Back and redraws the whole frame, including when Back is ignored mid-game. Do not remove this without checking on a bar.
 - A clear that names an element the device no longer shows is answered with HTTP 400. `src/main.ts` treats that as success: the element is gone, which is what was asked for.
 - The back display is 160×80, but the system draws its status icons in a column on the right edge: keep app elements at x ≤ 144.
+- Firmware 1.3.1 only provides `console.log`, `console.info` and `console.error`. `console.warn` does not exist there: calling it throws `TypeError: Expected a function`, which silently kills whatever callback it was in. `test/runtime.test.ts` fails if any other console method is used. In the bar's log, `console.log` lines (debug level) do not show up; use `console.info` for anything that must be readable afterwards.
 - A draw takes about 35 ms on the bar (up to about 90 ms), the first full frame more. Tenths of a second redraw every 100 ms during the last ten seconds only; `src/main.ts` falls back to whole seconds if draws get slower than `TENTHS_BUDGET_MS`.
 - `priority` is 1–100. Keep it at 50 unless the app deliberately needs to take the screen from another one.
 - Colors are `#RRGGBBAA`.

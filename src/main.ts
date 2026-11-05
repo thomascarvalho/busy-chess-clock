@@ -108,7 +108,7 @@ function settled(what: string, error: string | undefined): void {
   const typical = drawTime.smoothed();
   if (tenths && typical !== undefined && drawTime.count >= TENTHS_MIN_DRAWS && typical > TENTHS_BUDGET_MS) {
     tenths = false;
-    console.warn(`${APP}: draws take about ${Math.round(typical)} ms, showing whole seconds only`);
+    console.info(`${APP}: draws take about ${Math.round(typical)} ms, showing whole seconds only`);
     schedule();
   }
 }
@@ -220,7 +220,7 @@ async function loadSettings(): Promise<Settings> {
     const { version, values } = await getAppSettings(APP);
 
     if (version !== SETTINGS_VERSION) {
-      console.warn(`${APP}: settings version ${version} != ${SETTINGS_VERSION}, using defaults`);
+      console.info(`${APP}: settings version ${version} != ${SETTINGS_VERSION}, using defaults`);
       return DEFAULTS;
     }
 
