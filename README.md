@@ -2,7 +2,7 @@
 
 A chess clock for the BUSY Bar. The app runs entirely on the bar (on-device JavaScript, written in TypeScript) and only talks to the local API at `http://localhost/api/...`: it makes no external network request.
 
-App id: `com.thomascarvalho.chessclock`. It needs a bar with HTTP API 27.12.0 or later, and was developed and tested on firmware 1.3.1 (HTTP API 27.14.0).
+App id: `com.thomascarvalho.chessclock`. It needs a bar with HTTP API 27.12.0 or later, was developed on firmware 1.3.1 (HTTP API 27.14.0) and tested again on firmware 1.4.1 (HTTP API 27.15.0).
 
 ![The front display in setup, during a game, under ten seconds and paused, and the back display during a game](docs/screens.svg)
 
