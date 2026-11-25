@@ -114,7 +114,7 @@ pnpm app:uninstall  # removes it (settings are kept)
 | `src/memory.ts` | remembers the time control of the last game across launches |
 | `src/main.ts` | wiring: input, timer, sounds, cleanup on exit |
 | `shared/device.ts` | HTTP client for the bar |
-| `tools/` | scripts that generate the sounds and the icons |
+| `tools/` | scripts that generate the sounds and the icons, and `countdown-sim.mjs`, which replays the countdown's redraws on a model of the bar's clock (`node tools/countdown-sim.mjs`) |
 | `test/` | unit tests for everything above except `main.ts` and `device.ts` |
 
 Remaining time is always computed from the difference between timestamps taken at each press; the timer only decides when to redraw.
