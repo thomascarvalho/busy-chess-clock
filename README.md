@@ -1,6 +1,6 @@
 # Chess Clock
 
-A chess clock for the BUSY Bar. The app runs entirely on the bar (on-device JavaScript, written in TypeScript) and only talks to the local API at `http://localhost/api/...`: it makes no external network request.
+A chess clock for the BUSY Bar, [available in the BUSY Apps Catalog](https://apps.busy.app/apps/com.thomascarvalho.chessclock). The app runs entirely on the bar (on-device JavaScript, written in TypeScript) and only talks to the local API at `http://localhost/api/...`: it makes no external network request.
 
 App id: `com.thomascarvalho.chessclock`. It needs a bar with HTTP API 27.12.0 or later, was developed on firmware 1.3.1 (HTTP API 27.14.0) and tested again on firmware 1.4.1 (HTTP API 27.15.0).
 
@@ -54,6 +54,10 @@ Editable on the bar (app menu, then Setup) or in its web interface. They are rea
 With the defaults, the tenth entry of the wheel reads `7+3`. Set the two custom values to 20 and 5 and it reads `20+5`.
 
 ## Installation
+
+### From the BUSY Apps Catalog
+
+The simplest way: open [Chess Clock in the BUSY Apps Catalog](https://apps.busy.app/apps/com.thomascarvalho.chessclock) and install it on your bar from there.
 
 ### From a release
 
